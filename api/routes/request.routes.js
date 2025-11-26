@@ -4,11 +4,7 @@ import { authenticate } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/create", authenticate, (req, res) => {
-  //   RequestController.createRequest(req, res)
-  console.log("user is authenticated");
-  return res.status(200).json({ success: true, user: req.user });
-});
+router.post("/create", authenticate, RequestController.createRequest);
 // later: approve, reject, action, close
 
 export default router;
