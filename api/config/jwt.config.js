@@ -22,7 +22,7 @@ export const verifyAccessToken = (token) => {
   try {
     return jwt.verify(token, ACCESS_SECRET);
   } catch (error) {
-    throw new Error("Error verifying access token", error);
+    return null;
   }
 };
 
@@ -31,6 +31,6 @@ export const verifyRefreshToken = (token) => {
   try {
     return jwt.verify(token, REFRESH_SECRET);
   } catch (error) {
-    throw new Error("Error verifying reresh token", error);
+    return null;
   }
 };
