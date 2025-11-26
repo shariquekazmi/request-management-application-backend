@@ -1,0 +1,26 @@
+{
+  "name": "request-management-application",
+  "version": "1.0.0",
+  "description": "Request Management System",
+  "license": "ISC",
+  "author": "shariquekazmi",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --watch --env-file=.env server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate": "node --env-file=.env api/database/runMigration.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.27"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
