@@ -220,7 +220,7 @@ class AuthController {
 
       // User availaibility check
       const result = await pool.query(
-        "SELECT id, email, role FROM users WHERE id = $1",
+        "SELECT id, name, email, role, manager_id FROM users WHERE id = $1",
         [userId]
       );
 
