@@ -13,6 +13,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "node --env-file=.env api/database/runMigration.js"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
