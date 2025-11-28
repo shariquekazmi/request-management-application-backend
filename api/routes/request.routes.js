@@ -22,7 +22,7 @@ router.put(
   "/:id/:action",
   authenticate,
   validate(updateRequestSchema),
-  RequestController.updateRequestStatus
+  RequestController.updateRequestStatus.bind(RequestController)
 );
 
 // Fetch all requests based on the role based filter
@@ -35,5 +35,7 @@ router.get(
   validate(getRequestByIdSchema),
   RequestController.getRequestById
 );
+
+router.get("/raised/by/user", authenticate, RequestController.fetchRaisedReq);
 
 export default router;

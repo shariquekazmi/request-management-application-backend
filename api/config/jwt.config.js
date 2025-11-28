@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
-const ACCESS_EXPIRES_IN = "30m";
+const ACCESS_EXPIRES_IN = "1Hr";
 const REFRESH_EXPIRES_IN = "7d";
 
 export const generateAccessToken = (payload) => {

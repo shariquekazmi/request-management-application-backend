@@ -33,6 +33,37 @@ class UserController {
       });
     }
   }
+
+  async getEmployees(req, res) {
+    try {
+      logger.info("Fetching all employee details");
+      const result = await pool.query(
+        "SELECT id, name, role, manager_id FROM users WHERE role = $1",
+        ["EMPLOYEE"]
+      );
+
+      if (result.rowCount === 0) {
+        logger.warn("Employees data not found");
+
+        return res.status(200).json({
+          employees: [],
+          message: "No employees found",
+        });
+      }
+
+      logger.info("employees fetched successfully");
+
+      return res.status(200).json({
+        employees: result.rows,
+      });
+    } catch (err) {
+      logger.error("Error fetching employees", { error: err.message });
+
+      return res.status(500).json({
+        error: "Failed to fetch employees",
+      });
+    }
+  }
 }
 
 export default new UserController();

@@ -3,7 +3,7 @@ import { logger } from "../utils/logger.js";
 
 export const authenticate = (req, res, next) => {
   try {
-    logger.info("Access Token Authentication started");
+    logger.info("Access Token Authentication started", {});
 
     const authHeader = req.headers.authorization;
 

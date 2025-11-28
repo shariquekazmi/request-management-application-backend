@@ -1,4 +1,5 @@
 import pool from "../database/dbConnection.js";
+import { logger } from "../utils/logger.js";
 
 class RequestController {
   async createRequest(req, res) {
@@ -21,7 +22,7 @@ class RequestController {
           .json({ error: `Missing required fields: ${missing.join(", ")}` });
       }
 
-      if (req.user.id === assigned_to) {
+      if (req.user.id == assigned_to) {
         logger.warn("Create request failed - Assigned to self", { created_by });
         return res
           .status(400)
@@ -208,7 +209,7 @@ class RequestController {
         }
 
         if (action === "ACTION") {
-          if (request.status !== "APPROVED") {
+          if (request.status !== "MANAGER_APPROVED") {
             logger.warn("Employee attempted ACTION before approval", {
               requestId,
               status: request.status,
@@ -262,7 +263,6 @@ class RequestController {
     }
   }
 
-  // Reusable function for manager actions
   async managerAction(requestId, userId, newStatus, res) {
     logger.info("Manager action started", { requestId, userId, newStatus });
 
@@ -294,7 +294,6 @@ class RequestController {
     });
   }
 
-  // Reusable function for employee actions
   async employeeAction(requestId, userId, newStatus, res) {
     logger.info("Employee action started", { requestId, userId, newStatus });
 
@@ -348,13 +347,13 @@ class RequestController {
         LEFT JOIN users u1 ON r.created_by = u1.id
         LEFT JOIN users u2 ON r.assigned_to = u2.id
         WHERE r.manager_id = $1
-          AND r.status IN ('PENDING_MANAGER_APPROVAL', 'MANAGER_APPROVED', 'MANAGER_REJECTED')
+          AND r.status IN ('PENDING_MANAGER_APPROVAL', 'MANAGER_APPROVED', 'MANAGER_REJECTED', 'CLOSED')
         ORDER BY r.created_at DESC
       `;
         params = [user.id];
       }
 
-      // For EMPLOYEE Fetching only MANAGER_APPROVED or ACTION_IN_PROGRESS
+      // For EMPLOYEE Fetching only MANAGER_APPROVED, ACTION_IN_PROGRESS, Closed
       else if (user.role === "EMPLOYEE") {
         query = `
         SELECT r.*, 
@@ -364,7 +363,7 @@ class RequestController {
         LEFT JOIN users u1 ON r.created_by = u1.id
         LEFT JOIN users u2 ON r.assigned_to = u2.id
         WHERE r.assigned_to = $1
-          AND r.status IN ('MANAGER_APPROVED', 'ACTION_IN_PROGRESS')
+          AND r.status IN ('MANAGER_APPROVED', 'ACTION_IN_PROGRESS', 'CLOSED')
         ORDER BY r.created_at DESC
       `;
         params = [user.id];
@@ -383,6 +382,41 @@ class RequestController {
     } catch (err) {
       logger.error("Get All Requests Error", { error: err.message });
       return res.status(500).json({ error: "Failed to fetch requests" });
+    }
+  }
+
+  async fetchRaisedReq(req, res) {
+    try {
+      const userId = req.user.id;
+      logger.info("Fetching requests created by user", { userId });
+
+      const query = `
+      SELECT 
+        r.*,
+        u1.name AS created_by_name,
+        u2.name AS assigned_to_name
+      FROM requests r
+      LEFT JOIN users u1 ON r.created_by = u1.id
+      LEFT JOIN users u2 ON r.assigned_to = u2.id
+      WHERE r.created_by = $1
+      ORDER BY r.created_at DESC
+    `;
+
+      const result = await pool.query(query, [userId]);
+
+      logger.info("Fetched user-raised requests", {
+        userId,
+        count: result.rowCount,
+      });
+
+      return res.status(200).json({
+        requests: result.rows,
+      });
+    } catch (err) {
+      logger.error("Fetch req raised by user failed:", { error: err.message });
+      return res
+        .status(500)
+        .json({ error: "Failed to fetch user's raised requests" });
     }
   }
 

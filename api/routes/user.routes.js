@@ -4,6 +4,7 @@ import { authenticate } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.get("/managers", authenticate, userController.getManagers);
+router.get("/managers", userController.getManagers);
+router.get("/employees", authenticate, userController.getEmployees);
 
 export default router;
