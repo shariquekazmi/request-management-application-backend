@@ -8,12 +8,11 @@ const sql = fs.readFileSync(SQL_PATH).toString();
 
 // Loading environment variables
 async function runMigration() {
+  const isProd = process.env.NODE_ENV === "production";
+
   const client = new Client({
-    host: process.env.HOST,
-    port: process.env.PSQL_PORT,
-    user: process.env.USER,
-    password: process.env.PASSWORD,
-    database: process.env.DB_NAME,
+    connectionString: process.env.DATABASE_URL,
+    ssl: isProd ? { rejectUnauthorized: false } : false,
   });
 
   try {

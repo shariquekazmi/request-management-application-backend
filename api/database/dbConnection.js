@@ -1,12 +1,12 @@
 import pkg from "pg";
 const { Pool } = pkg;
+const isProd = process.env.NODE_ENV === "production";
+
 const pool = new Pool({
-  host: process.env.HOST,
-  port: process.env.PSQL_PORT,
-  user: process.env.USER,
-  password: process.env.PASSWORD,
-  database: process.env.DB_NAME,
+  connectionString: process.env.DATABASE_URL,
+  ssl: isProd ? { rejectUnauthorized: false } : false, // 👈 OFF locally / ON in Render
 });
+
 await pool
   .connect()
   .then(() => console.log("Database connected successfully"))
