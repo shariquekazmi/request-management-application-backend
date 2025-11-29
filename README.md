@@ -6,6 +6,8 @@ Employees can create requests, managers can approve or reject them, and assigned
 
 **Please create Managers first. Employees require a Manager assignment during creation.**
 
+**Please allow up to 30 seconds for the first API request. Render’s free-tier server may need time to wake up.**
+
 ---
 
 ## 🚀 How to Run the Application (Local Setup)
